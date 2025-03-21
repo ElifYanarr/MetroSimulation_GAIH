@@ -2,83 +2,91 @@ from collections import defaultdict, deque
 import heapq
 from typing import Dict, List, Set, Tuple, Optional
 
+# Istasyon sınıfı, her bir istasyonun özelliklerini ve komşularını tutar.
 class Istasyon:
     def __init__(self, idx: str, ad: str, hat: str):
-        self.idx = idx
-        self.ad = ad
-        self.hat = hat
+        self.idx = idx  # İstasyonun benzersiz kimliği (örneğin, "K1")
+        self.ad = ad    # İstasyonun adı (örneğin, "Kızılay")
+        self.hat = hat  # İstasyonun bağlı olduğu hat (örneğin, "Kırmızı Hat")
         self.komsular: List[Tuple['Istasyon', int]] = []  # (istasyon, süre) tuple'ları
 
+    # İstasyona bir komşu ekler ve iki istasyon arasındaki süreyi belirtir.
     def komsu_ekle(self, istasyon: 'Istasyon', sure: int):
         self.komsular.append((istasyon, sure))
 
+# MetroAgi sınıfı, metro ağını ve istasyonları yönetir.
 class MetroAgi:
     def __init__(self):
-        self.istasyonlar: Dict[str, Istasyon] = {}
-        self.hatlar: Dict[str, List[Istasyon]] = defaultdict(list)
+        self.istasyonlar: Dict[str, Istasyon] = {}  # İstasyonları idx'e göre tutar
+        self.hatlar: Dict[str, List[Istasyon]] = defaultdict(list)  # Hatları ve istasyonları tutar
 
+    # Yeni bir istasyon ekler.
     def istasyon_ekle(self, idx: str, ad: str, hat: str) -> None:
         if idx not in self.istasyonlar:
-            istasyon = Istasyon(idx, ad, hat)
-            self.istasyonlar[idx] = istasyon
-            self.hatlar[hat].append(istasyon)
+            istasyon = Istasyon(idx, ad, hat)  # Yeni bir Istasyon nesnesi oluştur
+            self.istasyonlar[idx] = istasyon  # İstasyonu sözlüğe ekle
+            self.hatlar[hat].append(istasyon)  # İstasyonu ilgili hatta ekle
 
+    # İki istasyon arasında bağlantı ekler.
     def baglanti_ekle(self, istasyon1_id: str, istasyon2_id: str, sure: int) -> None:
-        istasyon1 = self.istasyonlar[istasyon1_id]
-        istasyon2 = self.istasyonlar[istasyon2_id]
-        istasyon1.komsu_ekle(istasyon2, sure)
-        istasyon2.komsu_ekle(istasyon1, sure)
+        istasyon1 = self.istasyonlar[istasyon1_id]  # İlk istasyonu al
+        istasyon2 = self.istasyonlar[istasyon2_id]  # İkinci istasyonu al
+        istasyon1.komsu_ekle(istasyon2, sure)  # İkinci istasyonu birinciye komşu olarak ekle
+        istasyon2.komsu_ekle(istasyon1, sure)  # Birinci istasyonu ikinciye komşu olarak ekle
     
+    # BFS algoritması ile en az aktarmalı rotayı bulur.
     def en_az_aktarma_bul(self, baslangic_id: str, hedef_id: str) -> Optional[List[Istasyon]]:
         if baslangic_id not in self.istasyonlar or hedef_id not in self.istasyonlar:
-            return None
+            return None  # Başlangıç veya hedef istasyon yoksa None döndür
 
-        baslangic = self.istasyonlar[baslangic_id]
-        hedef = self.istasyonlar[hedef_id]
+        baslangic = self.istasyonlar[baslangic_id]  # Başlangıç istasyonunu al
+        hedef = self.istasyonlar[hedef_id]  # Hedef istasyonunu al
 
-        kuyruk = deque([(baslangic, [baslangic])])
-        ziyaret_edildi = set()
+        kuyruk = deque([(baslangic, [baslangic])])  # BFS için kuyruk oluştur
+        ziyaret_edildi = set()  # Ziyaret edilen istasyonları tut
 
         while kuyruk:
-            mevcut_istasyon, rota = kuyruk.popleft()
+            mevcut_istasyon, rota = kuyruk.popleft()  # Kuyruktan bir istasyon al
 
             if mevcut_istasyon == hedef:
-                return rota
+                return rota  # Hedefe ulaşıldıysa rotayı döndür
 
-            ziyaret_edildi.add(mevcut_istasyon)
+            ziyaret_edildi.add(mevcut_istasyon)  # Mevcut istasyonu ziyaret edildi olarak işaretle
 
             for komsu, _ in mevcut_istasyon.komsular:
                 if komsu not in ziyaret_edildi:
-                    kuyruk.append((komsu, rota + [komsu]))
+                    kuyruk.append((komsu, rota + [komsu]))  # Komşuyu kuyruğa ekle
 
-        return None
+        return None  # Rota bulunamazsa None döndür
 
+    # A* algoritması ile en hızlı rotayı bulur.
     def en_hizli_rota_bul(self, baslangic_id: str, hedef_id: str) -> Optional[Tuple[List[Istasyon], int]]:
         if baslangic_id not in self.istasyonlar or hedef_id not in self.istasyonlar:
-            return None
+            return None  # Başlangıç veya hedef istasyon yoksa None döndür
 
-        baslangic = self.istasyonlar[baslangic_id]
-        hedef = self.istasyonlar[hedef_id]
+        baslangic = self.istasyonlar[baslangic_id]  # Başlangıç istasyonunu al
+        hedef = self.istasyonlar[hedef_id]  # Hedef istasyonunu al
 
-        pq = [(0, id(baslangic), baslangic, [baslangic])]
-        ziyaret_edildi = set()
+        pq = [(0, id(baslangic), baslangic, [baslangic])]  # A* için öncelik kuyruğu oluştur
+        ziyaret_edildi = set()  # Ziyaret edilen istasyonları tut
 
         while pq:
-            toplam_sure, _, mevcut_istasyon, rota = heapq.heappop(pq)
+            toplam_sure, _, mevcut_istasyon, rota = heapq.heappop(pq)  # Kuyruktan bir istasyon al
 
             if mevcut_istasyon == hedef:
-                return rota, toplam_sure
+                return rota, toplam_sure  # Hedefe ulaşıldıysa rotayı ve süreyi döndür
 
             if mevcut_istasyon in ziyaret_edildi:
-                continue
-            ziyaret_edildi.add(mevcut_istasyon)
+                continue  # Ziyaret edildiyse atla
+
+            ziyaret_edildi.add(mevcut_istasyon)  # Mevcut istasyonu ziyaret edildi olarak işaretle
 
             for komsu, sure in mevcut_istasyon.komsular:
                 if komsu not in ziyaret_edildi:
-                    yeni_toplam_sure = toplam_sure + sure
-                    heapq.heappush(pq, (yeni_toplam_sure, id(komsu), komsu, rota + [komsu]))
+                    yeni_toplam_sure = toplam_sure + sure  # Yeni toplam süreyi hesapla
+                    heapq.heappush(pq, (yeni_toplam_sure, id(komsu), komsu, rota + [komsu]))  # Komşuyu kuyruğa ekle
 
-        return None
+        return None  # Rota bulunamazsa None döndür
 
 # Örnek Kullanım
 if __name__ == "__main__":
@@ -149,7 +157,7 @@ if __name__ == "__main__":
         rota, sure = sonuc
         print(f"En hızlı rota ({sure} dakika):", " -> ".join(i.ad for i in rota))
     
-     # Senaryo 3: Keçiören'den AŞTİ'ye
+    # Senaryo 3: Keçiören'den AŞTİ'ye
     print("\n3. Keçiören'den AŞTİ'ye:")
     rota = metro.en_az_aktarma_bul("T4", "M1")
     if rota:
@@ -158,4 +166,4 @@ if __name__ == "__main__":
     sonuc = metro.en_hizli_rota_bul("T4", "M1")
     if sonuc:
         rota, sure = sonuc
-        print(f"En hızlı rota ({sure} dakika):", " -> ".join(i.ad for i in rota)) 
+        print(f"En hızlı rota ({sure} dakika):", " -> ".join(i.ad for i in rota))
