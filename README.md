@@ -2,7 +2,7 @@
 
 A simulation project that finds the **fastest** and **least-transfer** routes within a specific metro network.
 
-## 🚀 Technologies & Libraries Used
+## Technologies & Libraries Used
 
 - **Python (VSCode)**  
 - **Collections Module**  
@@ -13,17 +13,17 @@ A simulation project that finds the **fastest** and **least-transfer** routes wi
 - **Typing Module**  
   - Improves code readability and safety through type hints (`List`, `Dict`, `Set`, `Tuple`, `Optional`, etc.).
 
-## 🧠 Algorithm Logic
+## Algorithm Logic
 
-### 🔁 Breadth-First Search (BFS)
+### Breadth-First Search (BFS)
 - Finds the route with the **least number of transfers**.
 - Uses a **queue** to explore the graph level by level from the source to the destination station.
 
-### ⭐ A* Search
+### A* Search
 - Finds the **fastest route** based on estimated travel times.
 - Uses a **priority queue** and heuristic cost estimates to explore the most promising paths first.
 
-## ✅ Example Usage & Test Results
+## Example Usage & Test Results
 
 ### 1. From **AŞTİ** to **OSB**
 - Least transfers:  
@@ -43,7 +43,7 @@ A simulation project that finds the **fastest** and **least-transfer** routes wi
 - Fastest route *(19 min)*:  
   `Keçiören → Gar → Gar → Sıhhiye → Kızılay → AŞTİ`
 
-## 🔧 Possible Improvements
+## Possible Improvements
 
 - Expand the simulation to larger or real-world metro networks.
 - Integrate other modes of public transport such as buses or trams.
