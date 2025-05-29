@@ -1,57 +1,58 @@
 # MetroSimulation_GAIH
-Belirli bir metro ağındaki en hızlı ve en az aktarmalı rotaları bulduran simülasyon projesi
 
-## Kullanılan Teknolojiler ve Kütüphaneler
--Python (VSCode)
+A simulation project that finds the **fastest** and **least-transfer** routes within a specific metro network.
 
--Collections Modülü:
-  Python'ın standart kütüphanelerinden biridir. Veri yapılarını verimli bir şekilde kullanmak için özel veri tipleri sağlar. Projede collections.deque kullanılmıştır.
+## 🚀 Technologies & Libraries Used
 
-  Deque: Baştan ve sondan ekleme ve çıkarma işlemleri yapabilen bir kuyruk (queue) yapısıdır. BFS (Breadth-First Search) algoritmasında, keşfedilecek istasyonları tutmak için deque kullanıldı. BFS, kuyruk yapısı kullandığı için deque tercih edilmiştir.
+- **Python (VSCode)**  
+- **Collections Module**  
+  - `deque`: A double-ended queue used in the Breadth-First Search (BFS) algorithm to manage station exploration efficiently.
+  - `defaultdict`: Automatically creates default values for keys, enabling easy mapping between lines and stations.
+- **Heapq Module**  
+  - Provides a priority queue implementation using a heap. Used in the A* algorithm to prioritize the lowest-cost paths.
+- **Typing Module**  
+  - Improves code readability and safety through type hints (`List`, `Dict`, `Set`, `Tuple`, `Optional`, etc.).
 
-  Defaultdict: Eğer bir anahtar sözlükte yoksa, otomatik olarak varsayılan bir değer atar.Her yeni hat için otomatik olarak boş bir liste oluşturduğu için, hatlar ve istasyonlar arasındaki ilişkiyi kolayca yönetmeyi sağlar.
+## 🧠 Algorithm Logic
 
--Heapq Modülü: Heap veri yapısını kullanarak (priority queue) uygulamasını sağlar.  En küçük elemana hızlı erişim sağlar ve eleman ekleme, çıkarma işlemlerini hızlı bir şekilde gerçekleştirir. A* algoritmasında, en düşük maliyetli rotayı bulmak için (priority queue) kullanıldı.
+### 🔁 Breadth-First Search (BFS)
+- Finds the route with the **least number of transfers**.
+- Uses a **queue** to explore the graph level by level from the source to the destination station.
 
--Typing Modülü: Tür belirlenmesini, kodun daha okunabilir olmasını ve hataların önceden tespit edilmesini sağlar.(List, Dict, Set, Tuple) 
-   
-   Optional: Bir tür ipucudur. Bir değişkenin belirli bir türde olabileceğini veya None olabileceğini belirtir.
+### ⭐ A* Search
+- Finds the **fastest route** based on estimated travel times.
+- Uses a **priority queue** and heuristic cost estimates to explore the most promising paths first.
 
-## Algoritmaların Çalışma Mantığı
+## ✅ Example Usage & Test Results
 
-  BFS Algoritması:
-- En az aktarmalı rotayı bulmak için kullanılır.
-- Kuyruk (queue) yapısı kullanır.
-- Başlangıç düğümünden başlayarak tüm komşu düğümleri keşfeder ve bu işlemi hedef düğüme ulaşana kadar tekrarlar.
+### 1. From **AŞTİ** to **OSB**
+- Least transfers:  
+  `AŞTİ → Kızılay → Kızılay → Ulus → Demetevler → OSB`
+- Fastest route *(25 min)*:  
+  `AŞTİ → Kızılay → Kızılay → Ulus → Demetevler → OSB`
 
-  A* Algoritması:
-- En hızlı rotayı bulmak için kullanılır.
-- Öncelik kuyruğu (priority queue) ve tahmini maliyet hesaplaması kullanır. Bu kuyruk, en düşük maliyetli düğümü her zaman öncelikli olarak işler.
- 
-## Örnek Kullanım ve Test Sonuçları
+### 2. From **Batıkent** to **Keçiören**
+- Least transfers:  
+  `Batıkent → Demetevler → Gar → Keçiören`
+- Fastest route *(21 min)*:  
+  `Batıkent → Demetevler → Gar → Keçiören`
 
-=== Test Senaryoları ===
+### 3. From **Keçiören** to **AŞTİ**
+- Least transfers:  
+  `Keçiören → Gar → Gar → Sıhhiye → Kızılay → AŞTİ`
+- Fastest route *(19 min)*:  
+  `Keçiören → Gar → Gar → Sıhhiye → Kızılay → AŞTİ`
 
-1. AŞTİ'den OSB'ye:
-En az aktarmalı rota: AŞTİ -> Kızılay -> Kızılay -> Ulus -> Demetevler -> OSB
-En hızlı rota (25 dakika): AŞTİ -> Kızılay -> Kızılay -> Ulus -> Demetevler -> OSB
+## 🔧 Possible Improvements
 
-2. Batıkent'ten Keçiören'e:
-En az aktarmalı rota: Batıkent -> Demetevler -> Gar -> Keçiören
-En hızlı rota (21 dakika): Batıkent -> Demetevler -> Gar -> Keçiören
+- Expand the simulation to larger or real-world metro networks.
+- Integrate other modes of public transport such as buses or trams.
+- Add support for walking distances or paid services (e.g., taxi, Uber) for interchanges.
+- Implement a **Night Mode** to simulate reduced service frequency during off-peak hours—this can help reduce energy consumption and optimize wait times.
+- Add **visualizations and animations** for a more interactive user experience.
 
-3. Keçiören'den AŞTİ'ye:
-En az aktarmalı rota: Keçiören -> Gar -> Gar -> Sıhhiye -> Kızılay -> AŞTİ
-En hızlı rota (19 dakika): Keçiören -> Gar -> Gar -> Sıhhiye -> Kızılay -> AŞTİ
+---
 
-## Projeyi Geliştirme Fikirleri
 
-- Daha büyük bir metro ağı üzerinde test edilebilir.
-- Yalnızca metro hatları değil, diğer toplu taşıma hatlarının da dahil edildiği yeni bir simülasyon yazılabilir.(Yürüme mesafesinin taksi,uber gibi ücrete tabi tutan araçlar da eklenebilir.)
-- Günlük saat dilimlerine göre gece modu uygulaması hayata geçirilebilir. Bu mod, gece saatlerinde metro seferlerinin sıklığını azaltarak hem enerji tasarrufu sağlayacak hem de maliyetleri düşürecektir. Ayrıca, gece saatlerinde daha az yoğunluk olan hatlarda seferlerin optimize edilmesi, kullanıcıların bekleme sürelerini de azaltacaktır.
-- Görselleştirilebilir, animasyonlar eklenebilir.
-.
-.
-.
 
    
